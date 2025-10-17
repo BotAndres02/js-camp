@@ -160,13 +160,6 @@ header div button:focus {
   outline: none;
 }
 
-header div img {
-  border-radius: 50%;
-  cursor: pointer;
-  width: 32px;
-  height: 32px;
-}
-
 /* Navegación del header a otras páginas */
 nav {
   align-items: center;
@@ -471,6 +464,7 @@ article {
 
     display: flex;
     align-items: start;
+    justify-content: space-between;
     gap: 1rem;
 
     &.is-hidden {
