@@ -19,7 +19,6 @@ botones.forEach(boton => {
 })
  */
 
-
 // Aplicar eventos a los botones de aplicar a jobs.
 const jobListingSection = document.querySelector(".jobs-listings");
 
@@ -41,11 +40,64 @@ const filtersId = {
 };
 
 const filterSection = document.querySelector(".search-filters");
+const message = document.getElementById("filter-selected-value");
+const jobs = document.querySelectorAll(".job-listing-card");
 
 filterSection.addEventListener("change", (e) => {
-  const element = e.target;
+  const { value } = e.target;
 
-  if (Object.values(filtersId).includes(element.id)) {
-    console.log(element.value);
+  if (Object.values(filtersId).includes(e.target.id)) {
+    message.textContent = `Elemento seleccionado
+    : ${value}`;
   }
+
+  jobs.forEach((job) => {
+    const modalidad = job.getAttribute("data-modalidad");
+    const isShown = value === "" || value === modalidad;
+    job.classList.toggle("is-hidden", !isShown);
+  });
 });
+
+async function getData() {
+  try {
+
+    const res = await fetch("./data.json");
+    if(!res.ok) throw new Error(`http error! ${res.status}`)
+
+    const data = await res.json();
+    console.log(data);
+
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+//getData();
+/** * Ejemplos de otros eventos
+
+const searchInput = document.getElementById('empleos-search-input');
+
+// Evento Input
+searchInput.addEventListener('input', function(){
+  console.log(searchInput.value)
+})
+
+// Evento Blur
+searchInput.addEventListener('blur', function(){
+  console.log(searchInput.value)
+})
+
+// Evento Keydown
+searchInput.addEventListener('keydown', function(e){
+  console.log("Pressed key: " + e.key)
+  console.log("Is shift pressed: " + e.altKey);
+  console.log("Is ctrl pressed: " + e.ctrlKey);
+  console.log("Is shift pressed: " + e.shiftKey);
+})
+
+// Evento submit
+const searchForm = document.getElementById('empleos-search-form');
+searchForm.addEventListener('submit', function(e){
+  e.preventDefault();
+  console.log('submit');
+}) */
