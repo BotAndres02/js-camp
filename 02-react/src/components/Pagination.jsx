@@ -1,72 +1,74 @@
+import styles from "./Pagination.module.css";
+
 const Pagination = ({ currentPage = 1, totalPages = 5, onPageChange }) => {
   const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
 
   const isFirstPage = currentPage === 1;
   const isLastPage = currentPage === totalPages;
 
-  const stylePrevBtn = isFirstPage ? {PointerEvents: 'none', opacity: 0.5} : {};
-  const styleNextBtn = isLastPage ? {PointerEvents: 'none', opacity: 0.5} : {};
+  const styleButtons = (value) =>
+    value ? { pointerEvents: "none", opacity: 0.5 } : {};
 
   const handlePrevClick = (e) => {
     e.preventDefault();
-    if(!isFirstPage){
-        onPageChange(currentPage - 1);
+    if (!isFirstPage) {
+      onPageChange(currentPage - 1);
     }
   };
 
   const handleNextClick = (e) => {
     e.preventDefault();
-    if(!isLastPage){
-        onPageChange(currentPage + 1)
+    if (!isLastPage) {
+      onPageChange(currentPage + 1);
     }
-  }
+  };
 
   const handlePageChange = (e, page) => {
     e.preventDefault();
-    if(page !== currentPage){
-        onPageChange(page)
+    if (page !== currentPage) {
+      onPageChange(page);
     }
   };
 
   return (
-    <nav className="pagination">
-      <a href="#" onClick={handlePrevClick} style={stylePrevBtn}>
+    <nav className={styles.pagination}>
+      <a href="#" onClick={handlePrevClick} style={styleButtons(isFirstPage)}>
         <svg
           width="16"
           height="16"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         >
           <path stroke="none" d="M0 0h24v24H0z" fill="none" />
           <path d="M15 6l-6 6l6 6" />
         </svg>
       </a>
 
-      {pages.map((page, id) => (
+      {pages.map((page) => (
         <a
-          key={id}
+          key={page}
           href="#"
-          className={currentPage === page ? "is-active" : ""}
+          className={currentPage === page ? styles.isActive : ""}
           onClick={(event) => handlePageChange(event, page)}
         >
           {page}
         </a>
       ))}
 
-      <a href="#" onClick={handleNextClick} style={styleNextBtn}>
+      <a href="#" onClick={handleNextClick} style={styleButtons(isLastPage)}>
         <svg
           width="16"
           height="16"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
-          stroke-width="1.5"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
           className="icon icon-tabler icons-tabler-outline icon-tabler-chevron-right"
         >
           <path stroke="none" d="M0 0h24v24H0z" fill="none" />

@@ -1,10 +1,36 @@
-const JobSearcher = () => {
+import { useId } from "react";
+
+const JobSearcher = ({ onSearch, onTextFilter }) => {
+  const idText = useId();
+  const idTechnology = useId();
+  const idLocation = useId();
+  const idExperience = useId();
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(e.target);
+
+    const filters = {
+      technology: formData.get(idTechnology),
+      location: formData.get(idLocation),
+      experience: formData.get(idExperience),
+    };
+
+    onSearch(filters);
+  };
+
+  const handleTextChange = (e) => {
+    const input = e.target.value;
+    onTextFilter(input);
+  };
+
   return (
     <section className="jobs-search">
       <h1>Encuentra tu próximo trabajo</h1>
       <p>Explora miles de oportunidades en el sector tecnológico.</p>
 
-      <form id="empleos-search-form" role="search">
+      <form onSubmit={handleSubmit} id="empleos-search-form" role="search">
         <div className="search-bar">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -13,9 +39,9 @@ const JobSearcher = () => {
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
-            stroke-width="1"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1"
+            strokeLinecap="round"
+            strokeLinejoin="round"
             className="icon icon-tabler icons-tabler-outline icon-tabler-search"
           >
             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
@@ -24,16 +50,19 @@ const JobSearcher = () => {
           </svg>
 
           <input
-            name="search"
+            name={idText}
             id="empleos-search-input"
-            required
             type="text"
             placeholder="Buscar trabajos, empresas o habilidades"
+            onChange={handleTextChange}
           />
+          <button style={{ position: "absolute", right: "4px" }} type="submit">
+            Buscar
+          </button>
         </div>
 
         <div className="search-filters">
-          <select name="technology" id="filter-technology">
+          <select name={idTechnology} id="filter-technology">
             <option value="">Tecnología</option>
             <option value="javascript">JavaScript</option>
             <option value="python">Python</option>
@@ -42,7 +71,7 @@ const JobSearcher = () => {
             <option value="node">Node.js</option>
           </select>
 
-          <select name="location" id="location">
+          <select name={idLocation} id="location">
             <option value="">Ubicación</option>
             <option value="remoto">Remoto</option>
             <option value="cdmx">Ciudad de México</option>
@@ -51,7 +80,7 @@ const JobSearcher = () => {
             <option value="barcelona">Barcelona</option>
           </select>
 
-          <select name="experience-level" id="experience-level">
+          <select name={idExperience} id="experience-level">
             <option value="">Nivel de experiencia</option>
             <option value="junior">Junior</option>
             <option value="mid-level">Mid-level</option>

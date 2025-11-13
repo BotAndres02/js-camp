@@ -8,9 +8,9 @@ const Header = () => {
         <svg
           fill="none"
           stroke="currentColor"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="2"
           viewBox="0 0 24 24"
           xmlns="http://www.w3.org/2000/svg"
         >
@@ -19,14 +19,10 @@ const Header = () => {
         </svg>
         DevJobs
       </h1>
-        <Nav />
-      <div class="header-actions">
+      <Nav />
+      <div className="header-actions">
         <button>Subir CV</button>
-        <Avatar
-          size="32"
-          service="github"
-          username="botandres02"
-        />
+        <Avatar size="32" service="github" username="botandres02" />
       </div>
     </header>
   );
