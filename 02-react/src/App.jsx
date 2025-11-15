@@ -1,72 +1,73 @@
 import "./App.css";
-import jobs from "../public/data.json";
 
-import { Header, Footer, JobCard, JobSearcher } from "./components";
+import {
+  Header,
+  Footer,
+  JobListing,
+  JobSearcher,
+  Pagination,
+} from "./components";
+import { useState } from "react";
+
+import jobsData from "./db/data.json";
+
+const RESULTS_PER_PAGE = 4;
 
 function App() {
+  const [filters, setFilters] = useState({
+    technology: "",
+    location: "",
+    experience: "",
+  });
+  const [textToFilter, settTextToFilter] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const jobsFilteredByFilters = jobsData.filter((job) => {
+    return (
+      filters.technology === "" || job.data.technology === filters.technology
+    );
+  });
+
+  const jobsWithTextFilter =
+    textToFilter === ""
+      ? jobsFilteredByFilters
+      : jobsFilteredByFilters.filter((job) => {
+          return job.titulo.toLowerCase().includes(textToFilter.toLowerCase());
+        });
+
+  const totalPages = Math.ceil(jobsWithTextFilter.length / RESULTS_PER_PAGE);
+
+  const pageResults = jobsWithTextFilter.slice(
+    (currentPage - 1) * RESULTS_PER_PAGE,
+    currentPage * RESULTS_PER_PAGE
+  );
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  const handleSearch = (filters) => {
+    setFilters(filters);
+    setCurrentPage(1);
+  };
+
+  const handleTextFilter = (newTextToFilter) => {
+    settTextToFilter(newTextToFilter);
+    setCurrentPage(1);
+  };
+
   return (
     <>
       <Header />
       <main>
-        <JobSearcher />
+        <JobSearcher onSearch={handleSearch} onTextFilter={handleTextFilter} />
 
         <section>
-          <div>
-            <h2>Resultados de búsqueda</h2>
-          </div>
-
-          <div className="jobs-listings">
-            {jobs.map((job) => (
-              <JobCard
-                key={job.id}
-                titulo={job.titulo}
-                empresa={job.empresa}
-                ubicacion={job.ubicacion}
-                descripcion={job.descripcion}
-              />
-            ))}
-          </div>
-
-          <nav className="pagination">
-            <a href="#">
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                <path d="M15 6l-6 6l6 6" />
-              </svg>
-            </a>
-            <a className="is-active" href="#">
-              1
-            </a>
-            <a href="#">2</a>
-            <a href="#">3</a>
-            <a href="#">4</a>
-            <a href="#">5</a>
-            <a href="#">
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                className="icon icon-tabler icons-tabler-outline icon-tabler-chevron-right"
-              >
-                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                <path d="M9 6l6 6l-6 6" />
-              </svg>
-            </a>
-          </nav>
+          <JobListing data={pageResults} />
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
         </section>
       </main>
       <Footer />
