@@ -1,10 +1,18 @@
-import { useId } from "react";
+import { useId, useState } from "react";
+import styles from "./JobSearcher.module.css";
 
-const JobSearcher = ({ onSearch, onTextFilter }) => {
+const JobSearcher = ({ onSearch, onChangeText, onReset }) => {
   const idText = useId();
   const idTechnology = useId();
   const idLocation = useId();
   const idExperience = useId();
+  const idSalary = useId();
+  const idContractType = useId();
+
+  const [focusedField, setFocusedField] = useState(null);
+
+  // TODO: Quitar flag cuando se implementen los campos
+  const isVisible = true;
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -12,6 +20,7 @@ const JobSearcher = ({ onSearch, onTextFilter }) => {
     const formData = new FormData(e.target);
 
     const filters = {
+      search: formData.get(idText),
       technology: formData.get(idTechnology),
       location: formData.get(idLocation),
       experience: formData.get(idExperience),
@@ -20,9 +29,14 @@ const JobSearcher = ({ onSearch, onTextFilter }) => {
     onSearch(filters);
   };
 
+  const handleReset = () => {
+    document.querySelector(".search-form").reset();
+    onReset();
+  };
+
   const handleTextChange = (e) => {
     const input = e.target.value;
-    onTextFilter(input);
+    onChangeText(input);
   };
 
   return (
@@ -30,8 +44,17 @@ const JobSearcher = ({ onSearch, onTextFilter }) => {
       <h1>Encuentra tu próximo trabajo</h1>
       <p>Explora miles de oportunidades en el sector tecnológico.</p>
 
-      <form onSubmit={handleSubmit} id="empleos-search-form" role="search">
-        <div className="search-bar">
+      <form
+        onSubmit={handleSubmit}
+        id="empleos-search-form"
+        className="search-form"
+        role="search"
+      >
+        <div
+          className={`search-bar ${
+            focusedField === "search" ? styles.inputFocused : ""
+          }`}
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"
@@ -55,11 +78,20 @@ const JobSearcher = ({ onSearch, onTextFilter }) => {
             type="text"
             placeholder="Buscar trabajos, empresas o habilidades"
             onChange={handleTextChange}
+            onFocus={() => setFocusedField("search")}
+            onBlur={() => setFocusedField(null)}
           />
-          <button style={{ position: "absolute", right: "4px" }} type="submit">
-            Buscar
+
+          <button type="submit">Buscar</button>
+          <button type="button" onClick={handleReset}>
+            Limpiar Filtros
           </button>
         </div>
+        {focusedField === "search" && (
+          <small className={styles.inputHint}>
+            Busca por título de trabajo o empresa
+          </small>
+        )}
 
         <div className="search-filters">
           <select name={idTechnology} id="filter-technology">
@@ -88,6 +120,33 @@ const JobSearcher = ({ onSearch, onTextFilter }) => {
             <option value="lead">Lead</option>
           </select>
         </div>
+
+        {!isVisible && (
+          <>
+            <div className={styles.formGroup}>
+              <label htmlFor={idSalary}>Salario mínimo</label>
+              <input
+                type="number"
+                name={idSalary}
+                id={idSalary}
+                placeholder="3000"
+                min="0"
+                step="1000"
+              />
+            </div>
+
+            <div className={styles.formGroup}>
+              <label htmlFor={idContractType}>Tipo de contrato</label>
+              <select name={idContractType} id={idContractType}>
+                <option value="">Todos</option>
+                <option value="full-time">Tiempo completo</option>
+                <option value="part-time">Medio tiempo</option>
+                <option value="freelance">Freelance</option>
+                <option value="internship">Prácticas</option>
+              </select>
+            </div>
+          </>
+        )}
       </form>
     </section>
   );

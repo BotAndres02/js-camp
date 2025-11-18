@@ -18,13 +18,24 @@ function App() {
     technology: "",
     location: "",
     experience: "",
+    salary: 0,
+    contractType: "",
   });
-  const [textToFilter, settTextToFilter] = useState("");
+  const [textToFilter, setTextToFilter] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
   const jobsFilteredByFilters = jobsData.filter((job) => {
+    const jobSalary = parseInt(job.data.salary) || 0;
+    const minSalary = filters.salary ? parseInt(filters.salary) : 0;
+
     return (
-      filters.technology === "" || job.data.technology === filters.technology
+      (filters.technology === "" ||
+        job.data.technology === filters.technology) &&
+      (filters.location === "" || job.data.modalidad === filters.location) &&
+      (filters.experience === "" || job.data.nivel === filters.experience) &&
+      (filters.contractType === "" ||
+        job.data.contractType === filters.contractType) &&
+      jobSalary >= minSalary
     );
   });
 
@@ -32,12 +43,15 @@ function App() {
     textToFilter === ""
       ? jobsFilteredByFilters
       : jobsFilteredByFilters.filter((job) => {
-          return job.titulo.toLowerCase().includes(textToFilter.toLowerCase());
+          return (
+            job.titulo.toLowerCase().includes(textToFilter.toLowerCase()) ||
+            job.empresa.toLowerCase().includes(textToFilter.toLowerCase())
+          );
         });
 
   const totalPages = Math.ceil(jobsWithTextFilter.length / RESULTS_PER_PAGE);
 
-  const pageResults = jobsWithTextFilter.slice(
+  const pagedResults = jobsWithTextFilter.slice(
     (currentPage - 1) * RESULTS_PER_PAGE,
     currentPage * RESULTS_PER_PAGE
   );
@@ -45,13 +59,29 @@ function App() {
     setCurrentPage(page);
   };
 
-  const handleSearch = (filters) => {
-    setFilters(filters);
+  const handleSearch = (newFilters) => {
+    setFilters({
+      technology: newFilters.technology,
+      location: newFilters.location,
+      experience: newFilters.experience,
+    });
+    setTextToFilter(newFilters.search || "");
     setCurrentPage(1);
   };
 
-  const handleTextFilter = (newTextToFilter) => {
-    settTextToFilter(newTextToFilter);
+  const handleChangeText = (text) => {
+    setTextToFilter(text);
+    setCurrentPage(1);
+  };
+
+  const handleReset = () => {
+    setFilters({
+      technology: "",
+      location: "",
+      experience: "",
+    });
+
+    setTextToFilter("");
     setCurrentPage(1);
   };
 
@@ -59,10 +89,14 @@ function App() {
     <>
       <Header />
       <main>
-        <JobSearcher onSearch={handleSearch} onTextFilter={handleTextFilter} />
+        <JobSearcher
+          onSearch={handleSearch}
+          onChangeText={handleChangeText}
+          onReset={handleReset}
+        />
 
         <section>
-          <JobListing data={pageResults} />
+          <JobListing data={pagedResults} />
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}
