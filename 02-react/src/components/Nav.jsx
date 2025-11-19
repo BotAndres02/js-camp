@@ -1,10 +1,12 @@
+import { Link } from "./Link";
+
 const Nav = () => {
   return (
     <nav>
-      <a href="">Inicio</a>
-      <a href="">Empleos</a>
-      <a href="">Empresas</a>
-      <a href="">Salarios</a>
+      <Link href="/">Inicio</Link>
+      <Link href="/search">Empleos</Link>
+      <Link href="">Empresas</Link>
+      <Link href="">Salarios</Link>
     </nav>
   );
 };

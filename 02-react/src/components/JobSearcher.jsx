@@ -1,5 +1,6 @@
-import { useId, useState } from "react";
+import { useId } from "react";
 import styles from "./JobSearcher.module.css";
+import { useSearchForm } from "../hooks/useSearchForm.js";
 
 const JobSearcher = ({ onSearch, onChangeText, onReset }) => {
   const idText = useId();
@@ -9,35 +10,24 @@ const JobSearcher = ({ onSearch, onChangeText, onReset }) => {
   const idSalary = useId();
   const idContractType = useId();
 
-  const [focusedField, setFocusedField] = useState(null);
-
   // TODO: Quitar flag cuando se implementen los campos
   const isVisible = true;
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    const formData = new FormData(e.target);
-
-    const filters = {
-      search: formData.get(idText),
-      technology: formData.get(idTechnology),
-      location: formData.get(idLocation),
-      experience: formData.get(idExperience),
-    };
-
-    onSearch(filters);
-  };
-
-  const handleReset = () => {
-    document.querySelector(".search-form").reset();
-    onReset();
-  };
-
-  const handleTextChange = (e) => {
-    const input = e.target.value;
-    onChangeText(input);
-  };
+  const {
+    focusedField,
+    setFocusedField,
+    handleSubmit,
+    handleTextChange,
+    handleReset,
+  } = useSearchForm({
+    idText,
+    idTechnology,
+    idLocation,
+    idExperience,
+    onSearch,
+    onChangeText,
+    onReset,
+  });
 
   return (
     <section className="jobs-search">
@@ -45,7 +35,7 @@ const JobSearcher = ({ onSearch, onChangeText, onReset }) => {
       <p>Explora miles de oportunidades en el sector tecnológico.</p>
 
       <form
-        onSubmit={handleSubmit}
+        onChange={handleSubmit}
         id="empleos-search-form"
         className="search-form"
         role="search"
@@ -82,7 +72,12 @@ const JobSearcher = ({ onSearch, onChangeText, onReset }) => {
             onBlur={() => setFocusedField(null)}
           />
 
-          <button type="submit">Buscar</button>
+          {/* <button type="submit">Buscar</button> */}
+          {/* {inputValue.length !== 0 && (
+            <button type="button" onClick={handleReset}>
+              Limpiar Filtros
+            </button>
+          )} */}
           <button type="button" onClick={handleReset}>
             Limpiar Filtros
           </button>
